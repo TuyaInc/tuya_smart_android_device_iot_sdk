@@ -1,0 +1,2 @@
+include ':app',// ':iot_sdk', ':base', ':netconfig'
+rootProject.name='TuyaSmart_AI_IoT'
