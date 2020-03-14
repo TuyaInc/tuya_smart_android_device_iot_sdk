@@ -36,7 +36,9 @@ public interface IoTCallback {
 
         //收到配网二维码短链
         void onShorturl(String url);
-
+        
+        //设备上线
+        void onActive();
     }
 
 ```
@@ -63,4 +65,9 @@ IoTSDKManager.sendDP(int id, int type, Object val)
      * @return
      */
 IoTSDKManager.httpRequest(String apiName, String apiVersion, String jsonMsg)
+
+
+//获取设备id
+IoTSDKManager.etDeviceId()
+
 ```

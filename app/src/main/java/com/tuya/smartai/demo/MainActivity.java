@@ -58,8 +58,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         ioTSDKManager = new IoTSDKManager(this);
 
-        ioTSDKManager.initSDK("/sdcard/", "你的pid"
-                , "你的uuid", "你的authkey", new IoTSDKManager.IoTCallback() {
+        ioTSDKManager.initSDK("/sdcard/", "U0fxNCEnZptKnQZy"
+                , "f2ef8b136911f4b0", "6PqrvTXJh1ye5tF4SABzl1qNmd53slMX", new IoTSDKManager.IoTCallback() {
 
                     @Override
                     public void onDpEvent(DPEvent event) {
@@ -84,6 +84,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     @Override
                     public void onShorturl(String url) {
                         Log.w(TAG, "shorturl: " + url);
+                    }
+
+                    @Override
+                    public void onActive() {
+                        Log.w(TAG, "onActive: " + ioTSDKManager.getDeviceId());
                     }
                 });
 
