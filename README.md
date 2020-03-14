@@ -1,6 +1,6 @@
-##Android IoT SDK
+## Android IoT SDK
 
-###接入
+### 接入
 * 权限要求
 
 ```java
@@ -43,7 +43,7 @@ public interface IoTCallback {
 
 ```
 
-###API
+### API
 ```java
 //本地解绑
 IoTSDKManager.reset();
