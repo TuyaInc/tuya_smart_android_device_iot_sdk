@@ -34,7 +34,7 @@ public interface IoTCallback {
         //解绑设备
         void onReset();
 
-        //收到配网二维码短链 若为null则获取失败
+        //收到配网二维码短链
         void onShorturl(String url);
         
         //设备上线
