@@ -56,7 +56,13 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     private void initSDK() {
 
-        ioTSDKManager = new IoTSDKManager(this);
+        ioTSDKManager = new IoTSDKManager(this) {
+            @Override
+            protected boolean isOffline() {
+                //实现自定义网络监测
+                return super.isOffline();
+            }
+        };
 
         ioTSDKManager.initSDK("/sdcard/", "你的pid"
                 , "你的uuid", "你的authkey", new IoTSDKManager.IoTCallback() {
@@ -64,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     @Override
                     public void onDpEvent(DPEvent event) {
                         if (event != null) {
-                            Log.w(TAG, "rev dp: " + event);
+                            Log.d(TAG, "rev dp: " + event);
                         }
                     }
 
@@ -88,7 +94,24 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
                     @Override
                     public void onActive() {
-                        Log.w(TAG, "onActive: " + ioTSDKManager.getDeviceId());
+                        Log.d(TAG, "onActive: " + ioTSDKManager.getDeviceId());
+                    }
+
+                    @Override
+                    public void onMQTTStatusChanged(int status) {
+                        Log.d(TAG, "onMQTTStatusChanged: " + status);
+
+                        switch (status) {
+                            case IoTSDKManager.STATUS_OFFLINE:
+                                // 设备网络离线
+                                break;
+                            case IoTSDKManager.STATUS_MQTT_OFFLINE:
+                                // 网络在线MQTT离线
+                                break;
+                            case IoTSDKManager.STATUS_MQTT_ONLINE:
+                                // 网络在线MQTT在线
+                                break;
+                        }
                     }
                 });
 
@@ -145,6 +168,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         super.onDestroy();
         if (httpdisposable != null) {
             httpdisposable.dispose();
+        }
+
+        if (ioTSDKManager != null) {
+            ioTSDKManager.destroy();
         }
     }
 }

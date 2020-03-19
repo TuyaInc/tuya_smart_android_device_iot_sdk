@@ -39,8 +39,23 @@ public interface IoTCallback {
         
         //设备上线
         void onActive();
+        
+        /**
+         * MQTT状态变化
+         * @param status STATUS_OFFLINE 网络离线; 
+         *               STATUS_MQTT_OFFLINE 网络在线MQTT离线; 
+         *               STATUS_MQTT_ONLINE 网络在线MQTT在线
+         */
+        void onMQTTStatusChanged(int status);
     }
 
+```
+
+* 销毁  
+
+```java
+//会进行广播注销等销毁操作
+ioTSDKManager.destroy();
 ```
 
 ### API
@@ -69,5 +84,15 @@ IoTSDKManager.httpRequest(String apiName, String apiVersion, String jsonMsg)
 
 //获取设备id
 IoTSDKManager.getDeviceId()
+
+//自定义实现网络状态监测，返回值为网络是否离线。SDK已提供默认实现，如无需要不必扩展此方法。
+ioTSDKManager = new IoTSDKManager(this) {
+
+            @Override
+            protected boolean isOffline() {
+                //实现自己的网络状态监测
+                return super.isOffline();
+            }
+        }
 
 ```
