@@ -37,14 +37,11 @@ public interface IoTCallback {
         //收到配网二维码短链
         void onShorturl(String url);
         
-        //设备上线
-        void onActive();
-        
         /**
          * MQTT状态变化
-         * @param status STATUS_OFFLINE 网络离线; 
-         *               STATUS_MQTT_OFFLINE 网络在线MQTT离线; 
-         *               STATUS_MQTT_ONLINE 网络在线MQTT在线
+         * @param status IoTSDKManager.STATUS_OFFLINE 网络离线; 
+         *               IoTSDKManager.STATUS_MQTT_OFFLINE 网络在线MQTT离线; 
+         *               IoTSDKManager.STATUS_MQTT_ONLINE 网络在线MQTT在线
          */
         void onMQTTStatusChanged(int status);
     }
