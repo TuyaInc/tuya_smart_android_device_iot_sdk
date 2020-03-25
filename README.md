@@ -31,7 +31,7 @@ public interface IoTCallback {
         //dp事件接收
         void onDpEvent(DPEvent event);
 
-        //解绑设备
+        //解绑设备(解绑时需要重启APP进程，否则会影响二次配网)
         void onReset();
 
         //收到配网二维码短链
