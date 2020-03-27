@@ -1,6 +1,13 @@
 ## Android IoT SDK
 
 ### 接入
+
+* 混淆  
+如果开启了混淆，在proguard-rules.pro文件中添加
+```
+-keep class com.tuya.smartai.iot_sdk.** {*;}
+```
+
 * 权限要求
 
 ```java
