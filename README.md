@@ -44,6 +44,13 @@ public interface IoTCallback {
          *               IoTSDKManager.STATUS_MQTT_ONLINE 网络在线MQTT在线
          */
         void onMQTTStatusChanged(int status);
+        
+        //设备激活
+        void onActive();
+        
+        //设备初次激活
+        void onFirstActive();
+        
     }
 
 ```

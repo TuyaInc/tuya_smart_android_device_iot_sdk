@@ -98,6 +98,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     }
 
                     @Override
+                    public void onFirstActive() {
+                        Log.d(TAG, "onFirstActive");
+                    }
+
+                    @Override
                     public void onMQTTStatusChanged(int status) {
                         Log.d(TAG, "onMQTTStatusChanged: " + status);
 
