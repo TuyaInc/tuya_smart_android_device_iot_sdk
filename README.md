@@ -35,7 +35,17 @@ ioTSDKManager.initSDK(String basePath, String productId, String uuid, String aut
 
 public interface IoTCallback {
 
-        //dp事件接收
+        /**
+                 * dp事件接收
+                 * @param event
+                 * 
+                 * 事件类型
+                 * DPEvent.Type.PROP_BOOL
+                 * DPEvent.Type.PROP_VALUE
+                 * DPEvent.Type.PROP_STR
+                 * DPEvent.Type.PROP_ENUM
+                 * DPEvent.Type.PROP_RAW
+                 */
         void onDpEvent(DPEvent event);
 
         //解绑设备(解绑时需要重启APP进程，否则会影响二次配网)
