@@ -39,7 +39,9 @@ public interface IoTCallback {
                  * dp事件接收
                  * @param event
                  * 
-                 * 事件类型
+                 * 事件值(event.value)
+                 * 事件id(event.dpid)
+                 * 事件类型(event.type)
                  * DPEvent.Type.PROP_BOOL
                  * DPEvent.Type.PROP_VALUE
                  * DPEvent.Type.PROP_STR
