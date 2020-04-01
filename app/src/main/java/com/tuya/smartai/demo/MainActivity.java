@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.alibaba.fastjson.JSONObject;
@@ -52,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     EditText strView;
     EditText rawView;
 
+    AlertDialog dialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +69,24 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             return false;
         });
         shortUrl = findViewById(R.id.shorturl);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        dialog = builder
+                .setCancelable(false)
+                .setTitle("提示")
+                .setMessage("重启APP完成解绑")
+                .setPositiveButton("确认", (dialog1, which) -> {
+                    Intent mStartActivity = getPackageManager().getLaunchIntentForPackage(getPackageName());
+                    if (mStartActivity != null) {
+                        int mPendingIntentId = 123456;
+                        PendingIntent mPendingIntent = PendingIntent.getActivity(MainActivity.this, mPendingIntentId
+                                , mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+                        AlarmManager mgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, mPendingIntent);
+                        Runtime.getRuntime().exit(0);
+                    }
+                })
+                .create();
 
         initDPViews();
 
@@ -113,15 +135,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
                     @Override
                     public void onReset() {
-                        Intent mStartActivity = getPackageManager().getLaunchIntentForPackage(getPackageName());
-                        if (mStartActivity != null) {
-                            int mPendingIntentId = 123456;
-                            PendingIntent mPendingIntent = PendingIntent.getActivity(MainActivity.this, mPendingIntentId
-                                    , mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
-                            AlarmManager mgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 2000, mPendingIntent);
-                            Runtime.getRuntime().exit(0);
-                        }
+
+                        runOnUiThread(() -> dialog.show());
                     }
 
                     @Override
