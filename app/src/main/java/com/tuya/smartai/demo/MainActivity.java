@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         };
 
         //注意：这里的pid等配置读取自local.properties文件，不能直接使用。请填写你自己的配置！
-        ioTSDKManager.initSDK("/sdcard/", BuildConfig.PRODUCT_ID
+        ioTSDKManager.initSDK("/sdcard/", "xqcwrcjnq6smfygq"
                 , BuildConfig.UUID, BuildConfig.AUTHOR_KEY, new IoTSDKManager.IoTCallback() {
 
                     @Override
