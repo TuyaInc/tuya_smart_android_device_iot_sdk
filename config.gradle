@@ -1,0 +1,13 @@
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def productId = properties.getProperty('PRODUCT_ID')
+def uuid = properties.getProperty('UUID')
+def authorKey = properties.getProperty('AUTHKEY')
+
+android {
+    defaultConfig {
+        buildConfigField 'String', 'PRODUCT_ID', "\"${productId}\""
+        buildConfigField 'String', 'UUID', "\"${uuid}\""
+        buildConfigField 'String', 'AUTHOR_KEY', "\"${authorKey}\""
+    }
+}

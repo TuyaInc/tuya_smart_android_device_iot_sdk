@@ -1,5 +1,15 @@
 ## Android IoT SDK
 
+### demo使用
+demo 提供了获取激活码、激活、dp点测试、状态日志展示等功能。
+> **注意** 激活需要的pid、uuid、authkey需要在本地配置中填写,
+> 在你的`local.properties`文件中增加如下:  
+> PRODUCT_ID=你的pid  
+> UUID=你的uuid  
+> AUTHKEY=你的key
+
+![demo截图](./demo_screenshot.jpeg)
+
 ### 接入
 
 * 混淆  
