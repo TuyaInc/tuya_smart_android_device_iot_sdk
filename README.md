@@ -7,7 +7,7 @@ demo 提供了获取激活码、激活、dp点测试、状态日志展示等功�
 > UUID=你的uuid  
 > AUTHKEY=你的key
 
-![demo截图](./demo_screenshot.jpeg)
+<img src="./demo_screenshot.jpeg" width = "40%" height = "20%" align=center />
 
 ### 接入
 
