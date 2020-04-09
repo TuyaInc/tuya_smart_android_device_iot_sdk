@@ -125,10 +125,28 @@
             android:text="string test" />
 
         <Button
-            android:id="@+id/raw_send"
+            android:id="@+id/bitmap_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/string_send"
+            android:layout_gravity="center"
+            android:layout_marginRight="20dp"
+            android:text="发送bitmap" />
+
+        <EditText
+            android:id="@+id/bitmap_val"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/bitmap_send"
+            android:layout_alignBottom="@id/bitmap_send"
+            android:layout_toRightOf="@id/bitmap_send"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/raw_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/bitmap_send"
             android:layout_gravity="center"
             android:layout_marginRight="20dp"
             android:text="发送RAW" />
@@ -142,6 +160,13 @@
             android:layout_toRightOf="@id/raw_send"
             android:text="raw test" />
 
+        <Button
+            android:id="@+id/combo_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/raw_send"
+            android:layout_marginRight="20dp"
+            android:text="发送多个" />
 
     </RelativeLayout>
 

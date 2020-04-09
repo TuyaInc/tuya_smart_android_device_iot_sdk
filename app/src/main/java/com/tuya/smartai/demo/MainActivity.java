@@ -23,7 +23,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.tuya.smartai.iot_sdk.DPEvent;
 import com.tuya.smartai.iot_sdk.IoTSDKManager;
 
+import java.lang.reflect.Array;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     RadioGroup enumView;
     EditText strView;
     EditText rawView;
+    EditText bitmapView;
 
     AlertDialog dialog;
 
@@ -103,13 +106,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         findViewById(R.id.int_send).setOnClickListener(this::onClick);
         findViewById(R.id.enum_send).setOnClickListener(this::onClick);
         findViewById(R.id.string_send).setOnClickListener(this::onClick);
+        findViewById(R.id.bitmap_send).setOnClickListener(this::onClick);
         findViewById(R.id.raw_send).setOnClickListener(this::onClick);
+        findViewById(R.id.combo_send).setOnClickListener(this::onClick);
 
         boolView = findViewById(R.id.bool_val);
         intView = findViewById(R.id.int_val);
         enumView = findViewById(R.id.enum_val);
         strView = findViewById(R.id.string_val);
         rawView = findViewById(R.id.raw_val);
+        bitmapView = findViewById(R.id.bitmap_val);
     }
 
     private void initSDK() {
@@ -253,6 +259,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 break;
             case R.id.raw_send:
                 ioTSDKManager.sendDP(105, DPEvent.Type.PROP_RAW, rawView.getText().toString().getBytes(Charset.forName("UTF-8")));
+                break;
+            case R.id.bitmap_send:
+                ioTSDKManager.sendDP(106, DPEvent.Type.PROP_BITMAP, Integer.parseInt(bitmapView.getText().toString()));
+                break;
+            case R.id.combo_send:
+                DPEvent event0 = new DPEvent(101, (byte) DPEvent.Type.PROP_BOOL, boolView.isChecked(), System.currentTimeMillis());
+                DPEvent event1 = new DPEvent(102, (byte) DPEvent.Type.PROP_VALUE, Integer.parseInt(intView.getText().toString()), System.currentTimeMillis());
+                DPEvent event2 = new DPEvent(105, (byte) DPEvent.Type.PROP_RAW, rawView.getText().toString().getBytes(Charset.forName("UTF-8")), System.currentTimeMillis());
+                DPEvent[] events = {event0, event1, event2};
+                ioTSDKManager.sendDP(events);
                 break;
         }
     }
