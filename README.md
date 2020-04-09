@@ -62,7 +62,7 @@ public interface IoTCallback {
         //解绑设备(解绑时需要重启APP进程，否则会影响二次配网)
         void onReset();
 
-        //收到配网二维码短链
+        //收到配网二维码短链（获取失败时为null）
         void onShorturl(String url);
         
         /**
