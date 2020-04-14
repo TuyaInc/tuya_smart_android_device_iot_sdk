@@ -211,6 +211,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (ioTSDKManager == null) {
             return;
         }
+        int timestamp = (int) (System.currentTimeMillis() / 1000L);
         switch (v.getId()) {
             case R.id.reset:
                 ioTSDKManager.reset();
@@ -258,17 +259,17 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 ioTSDKManager.sendDP(103, DPEvent.Type.PROP_ENUM, checked);
                 break;
             case R.id.raw_send:
-                ioTSDKManager.sendDP(105, DPEvent.Type.PROP_RAW, rawView.getText().toString().getBytes(Charset.forName("UTF-8")));
+                ioTSDKManager.sendDPWithTimeStamp(105, DPEvent.Type.PROP_RAW, rawView.getText().toString().getBytes(Charset.forName("UTF-8")), timestamp);
                 break;
             case R.id.bitmap_send:
-                ioTSDKManager.sendDP(106, DPEvent.Type.PROP_BITMAP, Integer.parseInt(bitmapView.getText().toString()));
+                ioTSDKManager.sendDPWithTimeStamp(106, DPEvent.Type.PROP_BITMAP, Integer.parseInt(bitmapView.getText().toString()), timestamp);
                 break;
             case R.id.combo_send:
-                DPEvent event0 = new DPEvent(101, (byte) DPEvent.Type.PROP_BOOL, boolView.isChecked(), System.currentTimeMillis());
-                DPEvent event1 = new DPEvent(102, (byte) DPEvent.Type.PROP_VALUE, Integer.parseInt(intView.getText().toString()), System.currentTimeMillis());
-                DPEvent event2 = new DPEvent(105, (byte) DPEvent.Type.PROP_RAW, rawView.getText().toString().getBytes(Charset.forName("UTF-8")), System.currentTimeMillis());
+                DPEvent event0 = new DPEvent(101, (byte) DPEvent.Type.PROP_BOOL, boolView.isChecked(), timestamp);
+                DPEvent event1 = new DPEvent(102, (byte) DPEvent.Type.PROP_VALUE, Integer.parseInt(intView.getText().toString()), timestamp);
+                DPEvent event2 = new DPEvent(105, (byte) DPEvent.Type.PROP_RAW, rawView.getText().toString().getBytes(Charset.forName("UTF-8")), timestamp);
                 DPEvent[] events = {event0, event1, event2};
-                ioTSDKManager.sendDP(events);
+                ioTSDKManager.sendDPWithTimeStamp(events);
                 break;
         }
     }

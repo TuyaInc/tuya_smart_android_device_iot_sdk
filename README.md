@@ -7,7 +7,7 @@ demo 提供了获取激活码、激活、dp点测试、状态日志展示等功�
 > UUID=你的uuid  
 > AUTHKEY=你的key
 
-![demo截图](./demo_screenshot.jpeg)
+<img src="./demo_screenshot.jpeg" width = "40%" height = "20%" align=center />
 
 ### 接入
 
@@ -103,6 +103,34 @@ IoTSDKManager.reset();
      * @return
      */
 IoTSDKManager.sendDP(int id, int type, Object val)
+
+/**
+     * 发送多个dp事件
+     *
+     * @param events 多个dp类型
+     * @return
+     */
+IoTSDKManager.sendDP(DPEvent... events)
+
+/**
+     * 发送dp事件带时间戳
+     *
+     * @param id   dp id
+     * @param type 类型 DPEvent.Type
+     * @param val  值
+     * @param timestamp 时间戳 单位秒
+     * @return
+     */
+IoTSDKManager.sendDPWithTimeStamp(int id, int type, Object val, int timestamp)
+
+
+/**
+     * 发送多个dp事件带时间戳（时间戳需要赋值在DPEvent.timestamp）
+     *
+     * @param events 多个dp类型
+     * @return
+     */
+IoTSDKManager.sendDPWithTimeStamp(DPEvent... events)
 
 /**
      * 发送http请求
