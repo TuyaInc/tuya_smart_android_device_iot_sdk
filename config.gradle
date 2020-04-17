@@ -2,10 +2,12 @@ Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 def uuid = properties.getProperty('UUID')
 def authorKey = properties.getProperty('AUTHKEY')
+def pid = properties.getProperty('PID')
 
 android {
     defaultConfig {
         buildConfigField 'String', 'UUID', "\"${uuid}\""
         buildConfigField 'String', 'AUTHOR_KEY', "\"${authorKey}\""
+        buildConfigField 'String', 'PID', "\"${pid}\""
     }
 }

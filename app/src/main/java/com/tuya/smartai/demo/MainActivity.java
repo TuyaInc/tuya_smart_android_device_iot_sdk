@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,11 +22,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.tuya.smartai.iot_sdk.DPEvent;
 import com.tuya.smartai.iot_sdk.IoTSDKManager;
 
-import java.lang.reflect.Array;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 
 import io.reactivex.disposables.Disposable;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -129,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         };
 
         //注意：这里的pid等配置读取自local.properties文件，不能直接使用。请填写你自己的配置！
-        ioTSDKManager.initSDK("/sdcard/", "xqcwrcjnq6smfygq"
+        ioTSDKManager.initSDK("/sdcard/", BuildConfig.PID
                 , BuildConfig.UUID, BuildConfig.AUTHOR_KEY, new IoTSDKManager.IoTCallback() {
 
                     @Override
