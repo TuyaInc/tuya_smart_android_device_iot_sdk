@@ -4,6 +4,7 @@ buildscript {
     repositories {
         google()
         maven { url 'http://maven.aliyun.com/nexus/content/repositories/central/' }
+        maven { url 'https://maven-other.tuya.com/repository/maven-releases/'}
         jcenter()
         
     }
@@ -19,6 +20,7 @@ allprojects {
     repositories {
         google()
         maven { url 'http://maven.aliyun.com/nexus/content/repositories/central/' }
+        maven { url 'https://maven-other.tuya.com/repository/maven-releases/'}
         jcenter()
         
     }
