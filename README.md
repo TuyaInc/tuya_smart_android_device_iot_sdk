@@ -15,7 +15,7 @@ demo 提供了获取激活码、激活、dp点测试、状态日志展示等功�
 * 依赖
 
 ```
-implementation 'com.tuya.smart:tuyasmart-iot_sdk:1.0.0'
+implementation 'com.tuya.smart:tuyasmart-iot_sdk:1.0.1'
 ```
 
 > 在项目根目录build.gradle中添加仓库地址
@@ -49,10 +49,11 @@ IoTSDKManager ioTSDKManager = new IoTSDKManager(context);
      * @param productId 产品id
      * @param uuid  用户id
      * @param authKey 认证key
+     * @param version 固件版本号（OTA用）
      * @param mCallback SDK回调方法
      * @return
      */
-ioTSDKManager.initSDK(String basePath, String productId, String uuid, String authorKey, IoTCallback mCallback);
+ioTSDKManager.initSDK(String basePath, String productId, String uuid, String authorKey, String version, IoTCallback mCallback);
 
 
 public interface IoTCallback {
@@ -168,4 +169,36 @@ ioTSDKManager = new IoTSDKManager(this) {
             }
         }
 
+```
+
+###OTA
+> 版本区分：根据`ioTSDKManager.initSDK `传入的`version`区分固件版本， 打新固件包时修改version（三位数字版本，如：1.2.3）
+
+目前支持设备端升级，设置下面的回调后，在后台上传新版本固件。之后会受到更新信息回调，此时就可以触发`ioTSDKManager.startUpgradeDownload `开始升级下载。
+
+```java 
+ioTSDKManager.setUpgradeCallback(new UpgradeEventCallback() {
+            @Override
+            public void onUpgradeInfo(String version) {
+                //收到更新信息 版本号：version
+                
+                //主动触发升级文件下载(收到更新回调后，可以触发)
+                ioTSDKManager.startUpgradeDownload();
+            }
+
+            @Override
+            public void onUpgradeDownloadStart() {
+                //开始升级下载回调
+            }
+
+            @Override
+            public void onUpgradeDownloadUpdate(int i) {
+                //下载进度回调 i%
+            }
+
+            @Override
+            public void upgradeFileDownloadFinished(int result, String file) {
+                //下载完成回调，result == 0 表示成功，file 为升级文件压缩包路径（建议安装完成后清除）
+            }
+        });
 ```

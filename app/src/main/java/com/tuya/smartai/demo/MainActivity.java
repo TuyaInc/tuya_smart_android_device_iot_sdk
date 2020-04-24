@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.alibaba.fastjson.JSONObject;
 import com.tuya.smartai.iot_sdk.DPEvent;
 import com.tuya.smartai.iot_sdk.IoTSDKManager;
+import com.tuya.smartai.iot_sdk.UpgradeEventCallback;
 
 import java.nio.charset.Charset;
 import java.util.List;
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     EditText bitmapView;
 
     AlertDialog dialog;
+    AlertDialog upgradeDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +71,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         });
         shortUrl = findViewById(R.id.shorturl);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        dialog = builder
+        dialog = new AlertDialog.Builder(MainActivity.this)
                 .setCancelable(false)
                 .setTitle("提示")
                 .setMessage("重启APP完成解绑")
@@ -85,6 +86,13 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         Runtime.getRuntime().exit(0);
                     }
                 })
+                .create();
+
+        upgradeDialog = new AlertDialog.Builder(MainActivity.this)
+                .setCancelable(true)
+                .setTitle("提示")
+                .setMessage("有新版本，确认开始下载")
+                .setPositiveButton("确认", (dialog1, which) -> ioTSDKManager.startUpgradeDownload())
                 .create();
 
         initDPViews();
@@ -124,9 +132,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             }
         };
 
+        output("固件版本：" + BuildConfig.VERSION_NAME);
+
         //注意：这里的pid等配置读取自local.properties文件，不能直接使用。请填写你自己的配置！
         ioTSDKManager.initSDK("/sdcard/", BuildConfig.PID
-                , BuildConfig.UUID, BuildConfig.AUTHOR_KEY, new IoTSDKManager.IoTCallback() {
+                , BuildConfig.UUID, BuildConfig.AUTHOR_KEY, BuildConfig.VERSION_NAME, new IoTSDKManager.IoTCallback() {
 
                     @Override
                     public void onDpEvent(DPEvent event) {
@@ -185,6 +195,35 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     }
                 });
 
+        ioTSDKManager.setUpgradeCallback(new UpgradeEventCallback() {
+            @Override
+            public void onUpgradeInfo(String s) {
+                Log.w(TAG, "onUpgradeInfo: " + s);
+
+                output("收到升级信息: " + s);
+
+                runOnUiThread(() -> upgradeDialog.show());
+            }
+
+            @Override
+            public void onUpgradeDownloadStart() {
+                Log.w(TAG, "onUpgradeDownloadStart");
+
+                output("开始升级下载");
+            }
+
+            @Override
+            public void onUpgradeDownloadUpdate(int i) {
+                Log.w(TAG, "onUpgradeDownloadUpdate: " + i);
+            }
+
+            @Override
+            public void upgradeFileDownloadFinished(int result, String file) {
+                Log.w(TAG, "upgradeFileDownloadFinished: " + result);
+
+                output("下载完成：" + result + " / " + file);
+            }
+        });
     }
 
     @Override

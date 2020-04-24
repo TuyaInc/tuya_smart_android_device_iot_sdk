@@ -8,7 +8,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         ndk {
@@ -46,5 +46,5 @@ dependencies {
     api 'io.reactivex.rxjava2:rxjava:2.2.8'
     implementation 'com.google.zxing:core:3.3.0'
 
-    implementation 'com.tuya.smart:tuyasmart-iot_sdk:1.0.0'
+    implementation 'com.tuya.smart:tuyasmart-iot_sdk:1.0.1'
 }
