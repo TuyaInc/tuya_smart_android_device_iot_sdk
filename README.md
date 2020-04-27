@@ -22,6 +22,7 @@ implementation 'com.tuya.smart:tuyasmart-iot_sdk:1.0.3'
 
 ```groovy
 maven { url 'https://maven-other.tuya.com/repository/maven-releases/'}
+maven { url 'https://maven-other.tuya.com/repository/maven-snapshots/'}
 ```
 
 * 混淆  
