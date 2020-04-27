@@ -15,7 +15,7 @@ demo 提供了获取激活码、激活、dp点测试、状态日志展示等功�
 * 依赖
 
 ```
-implementation 'com.tuya.smart:tuyasmart-iot_sdk:1.0.1'
+implementation 'com.tuya.smart:tuyasmart-iot_sdk:1.0.3'
 ```
 
 > 在项目根目录build.gradle中添加仓库地址
