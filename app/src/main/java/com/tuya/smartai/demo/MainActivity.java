@@ -190,6 +190,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                                 break;
                             case IoTSDKManager.STATUS_MQTT_ONLINE:
                                 // 网络在线MQTT在线
+
+                                DPEvent[] events = ioTSDKManager.getEvents();
+                                if (events != null) {
+                                    for (DPEvent event : events) {
+                                        if (event != null) {
+                                            output(event.toString());
+                                        }
+                                    }
+                                }
                                 break;
                         }
                     }
