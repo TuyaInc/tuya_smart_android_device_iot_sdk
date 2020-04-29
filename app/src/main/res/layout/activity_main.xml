@@ -6,10 +6,48 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <Button
+        android:id="@+id/reset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:background="@android:color/holo_orange_dark"
+        android:text="解绑设备"
+        android:textAllCaps="false"
+        android:textColor="#ffffff"
+        app:elevation="6dp" />
+
+    <Button
+        android:enabled="false"
+        android:id="@+id/send_dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/send_time"
+        android:text="发送DP"
+        android:textAllCaps="false"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#ffffff"
+        app:rippleColor="#ffffff" />
+
+    <Button
+        android:enabled="false"
+        android:id="@+id/send_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:text="发送DP(带时间戳)"
+        android:textAllCaps="false"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#ffffff"
+        app:rippleColor="#ffffff" />
+
     <TextView
         android:id="@+id/console"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/reset"
         android:layout_alignParentStart="true"
         android:alpha="0.6"
         android:gravity="left"
@@ -23,20 +61,9 @@
         android:visibility="invisible">
 
         <Button
-            android:id="@+id/reset"
-            style="@android:style/Widget.Material.Light.Button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:background="#E91E63"
-            android:text="解绑设备"
-            android:textColor="#ffffff" />
-
-        <Button
             android:id="@+id/bool_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/reset"
             android:layout_gravity="center"
             android:layout_marginRight="20dp"
             android:text="发送布尔" />
@@ -178,48 +205,31 @@
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:layout_below="@id/send_dp"
         android:id="@+id/dp_list"
         android:layout_width="300dp"
         android:layout_height="match_parent"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true" />
 
     <ImageView
         android:id="@+id/qrcode"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_below="@id/dp_control"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
+        android:layout_centerInParent="true"
         android:layout_margin="20dp" />
 
-    <TextView
-        android:id="@+id/shorturl"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/qrcode"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="10dp" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SEND"
-        android:textAllCaps="false"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#ffffff"
-        android:visibility="gone"
-        app:rippleColor="#ffffff" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="20dp"
-        app:elevation="6dp"
-        app:fabSize="normal"
-        app:pressedTranslationZ="10dp"
-        app:rippleColor="#ff87ffeb" />
+    <!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+    <!--        android:id="@+id/fab"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_alignParentEnd="true"-->
+    <!--        android:layout_alignParentBottom="true"-->
+    <!--        android:layout_margin="20dp"-->
+    <!--        android:src="@android:drawable/ic_menu_send"-->
+    <!--        app:elevation="6dp"-->
+    <!--        app:fabSize="normal"-->
+    <!--        app:pressedTranslationZ="10dp"-->
+    <!--        app:rippleColor="#ff87ffeb" />-->
 
 </RelativeLayout>

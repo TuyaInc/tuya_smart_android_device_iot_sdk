@@ -6,13 +6,13 @@
     app:cardCornerRadius="4dp"
     app:cardElevation="4dp"
     app:cardMaxElevation="8dp"
-    app:cardUseCompatPadding="true"
-    app:cardPreventCornerOverlap="true">
+    app:cardPreventCornerOverlap="true"
+    app:cardUseCompatPadding="true">
 
     <RelativeLayout
-        android:padding="10dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:padding="10dp">
 
         <TextView
             android:id="@+id/dp_id"
@@ -65,8 +65,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:checked="true" />
+            android:layout_centerVertical="true" />
 
     </RelativeLayout>
 

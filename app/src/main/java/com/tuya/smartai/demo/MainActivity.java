@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     IoTSDKManager ioTSDKManager;
 
     ImageView qrCode;
-    TextView shortUrl;
     TextView console;
 
     Switch boolView;
@@ -77,7 +76,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             clear();
             return false;
         });
-        shortUrl = findViewById(R.id.shorturl);
 
         dialog = new AlertDialog.Builder(MainActivity.this)
                 .setCancelable(false)
@@ -121,6 +119,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         findViewById(R.id.bitmap_send).setOnClickListener(this::onClick);
         findViewById(R.id.raw_send).setOnClickListener(this::onClick);
         findViewById(R.id.combo_send).setOnClickListener(this::onClick);
+        findViewById(R.id.send_dp).setOnClickListener(this::onClick);
+        findViewById(R.id.send_time).setOnClickListener(this::onClick);
 
         boolView = findViewById(R.id.bool_val);
         intView = findViewById(R.id.int_val);
@@ -171,7 +171,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         String url = (String) JSONObject.parseObject(urlJson).get("shortUrl");
 
                         runOnUiThread(() -> {
-                            shortUrl.setText("用涂鸦智能APP扫码激活");
+                            qrCode.setVisibility(View.VISIBLE);
+                            output("用涂鸦智能APP扫码激活");
                             qrCode.setImageBitmap(QRCodeUtil.createQRCodeBitmap(url, 400, 400));
                         });
                     }
@@ -181,7 +182,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         output("onActive: devId-> " + ioTSDKManager.getDeviceId());
 
                         runOnUiThread(() -> {
-                            shortUrl.setText("激活成功了");
+                            qrCode.setVisibility(View.GONE);
+                            output("激活成功了");
                         });
                     }
 
@@ -207,7 +209,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                                 DPEvent[] events = ioTSDKManager.getEvents();
                                 dpEventAdapter = new DPEventAdapter(Arrays.stream(events).filter(Objects::nonNull).collect(Collectors.toList()));
 
-                                runOnUiThread(() -> dpList.setAdapter(dpEventAdapter));
+                                runOnUiThread(() -> {
+                                    dpList.setAdapter(dpEventAdapter);
+                                    findViewById(R.id.send_dp).setEnabled(true);
+                                    findViewById(R.id.send_time).setEnabled(true);
+                                });
 
                                 if (events != null) {
                                     for (DPEvent event : events) {
@@ -331,6 +337,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 DPEvent event2 = new DPEvent(105, (byte) DPEvent.Type.PROP_RAW, rawView.getText().toString().getBytes(Charset.forName("UTF-8")), timestamp);
                 DPEvent[] events = {event0, event1, event2};
                 ioTSDKManager.sendDPWithTimeStamp(events);
+                break;
+            case R.id.send_dp:
+                ioTSDKManager.sendDP(dpEventAdapter.getCheckedList().toArray(new DPEvent[]{}));
+                break;
+            case R.id.send_time:
+                ioTSDKManager.sendDPWithTimeStamp(dpEventAdapter.getCheckedList().toArray(new DPEvent[]{}));
                 break;
         }
     }
