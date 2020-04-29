@@ -7,20 +7,20 @@
     android:orientation="vertical">
 
     <TextView
-        android:alpha="0.6"
-        android:gravity="right"
         android:id="@+id/console"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:alpha="0.6"
+        android:gravity="left"
         android:padding="10dp"
         android:text="接收日志在这里输出(长按清除): \n" />
 
     <RelativeLayout
         android:id="@+id/dp_control"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="invisible">
 
         <Button
             android:id="@+id/reset"
@@ -169,22 +169,28 @@
             android:text="发送多个" />
 
         <Switch
-            android:text="带时间戳"
-            android:layout_toRightOf="@id/combo_send"
-            android:layout_below="@id/raw_send"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_below="@id/raw_send"
+            android:layout_toRightOf="@id/combo_send"
+            android:text="带时间戳" />
 
     </RelativeLayout>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/dp_list"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"/>
 
     <ImageView
         android:id="@+id/qrcode"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_marginTop="20dp"
         android:layout_below="@id/dp_control"
-        android:layout_centerHorizontal="true"/>
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_margin="20dp" />
 
     <TextView
         android:id="@+id/shorturl"
@@ -193,5 +199,27 @@
         android:layout_below="@id/qrcode"
         android:layout_centerHorizontal="true"
         android:layout_margin="10dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SEND"
+        android:textAllCaps="false"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#ffffff"
+        android:visibility="gone"
+        app:rippleColor="#ffffff" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="20dp"
+        app:elevation="6dp"
+        app:fabSize="normal"
+        app:pressedTranslationZ="10dp"
+        app:rippleColor="#ff87ffeb" />
 
 </RelativeLayout>

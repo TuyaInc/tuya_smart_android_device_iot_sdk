@@ -17,6 +17,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.tuya.smartai.iot_sdk.DPEvent;
@@ -24,7 +26,10 @@ import com.tuya.smartai.iot_sdk.IoTSDKManager;
 import com.tuya.smartai.iot_sdk.UpgradeEventCallback;
 
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import io.reactivex.disposables.Disposable;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -56,6 +61,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     AlertDialog dialog;
     AlertDialog upgradeDialog;
+
+    private RecyclerView dpList;
+    private DPEventAdapter dpEventAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +128,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         strView = findViewById(R.id.string_val);
         rawView = findViewById(R.id.raw_val);
         bitmapView = findViewById(R.id.bitmap_val);
+
+        dpList = findViewById(R.id.dp_list);
+
+        dpList.setLayoutManager(new LinearLayoutManager(this));
+
     }
 
     private void initSDK() {
@@ -192,6 +205,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                                 // 网络在线MQTT在线
 
                                 DPEvent[] events = ioTSDKManager.getEvents();
+                                dpEventAdapter = new DPEventAdapter(Arrays.stream(events).filter(Objects::nonNull).collect(Collectors.toList()));
+
+                                runOnUiThread(() -> dpList.setAdapter(dpEventAdapter));
+
                                 if (events != null) {
                                     for (DPEvent event : events) {
                                         if (event != null) {
