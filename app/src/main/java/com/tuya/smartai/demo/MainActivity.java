@@ -8,10 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioGroup;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -25,7 +22,6 @@ import com.tuya.smartai.iot_sdk.DPEvent;
 import com.tuya.smartai.iot_sdk.IoTSDKManager;
 import com.tuya.smartai.iot_sdk.UpgradeEventCallback;
 
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -50,13 +46,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     ImageView qrCode;
     TextView console;
-
-    Switch boolView;
-    EditText intView;
-    RadioGroup enumView;
-    EditText strView;
-    EditText rawView;
-    EditText bitmapView;
 
     AlertDialog dialog;
     AlertDialog upgradeDialog;
@@ -112,22 +101,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     private void initDPViews() {
 
-        findViewById(R.id.bool_send).setOnClickListener(this::onClick);
-        findViewById(R.id.int_send).setOnClickListener(this::onClick);
-        findViewById(R.id.enum_send).setOnClickListener(this::onClick);
-        findViewById(R.id.string_send).setOnClickListener(this::onClick);
-        findViewById(R.id.bitmap_send).setOnClickListener(this::onClick);
-        findViewById(R.id.raw_send).setOnClickListener(this::onClick);
-        findViewById(R.id.combo_send).setOnClickListener(this::onClick);
         findViewById(R.id.send_dp).setOnClickListener(this::onClick);
         findViewById(R.id.send_time).setOnClickListener(this::onClick);
-
-        boolView = findViewById(R.id.bool_val);
-        intView = findViewById(R.id.int_val);
-        enumView = findViewById(R.id.enum_val);
-        strView = findViewById(R.id.string_val);
-        rawView = findViewById(R.id.raw_val);
-        bitmapView = findViewById(R.id.bitmap_val);
 
         dpList = findViewById(R.id.dp_list);
 
@@ -155,6 +130,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     public void onDpEvent(DPEvent event) {
                         if (event != null) {
                             output("收到 dp: " + event);
+
+                            runOnUiThread(() -> dpEventAdapter.updateEvent(event));
                         }
                     }
 
@@ -283,66 +260,13 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             case R.id.reset:
                 ioTSDKManager.reset();
                 break;
-//            case R.id.http:
-//                JSONObject params = new JSONObject();
-//                params.put("uuid", "1234");
-//                params.put("appId", "10000");
-//
-//                if (httpdisposable != null) {
-//                    httpdisposable.dispose();
-//                }
-//                httpdisposable = Observable.just(0)
-//                        .subscribeOn(Schedulers.io())
-//                        .subscribe(integer -> {
-//                            HttpResponse response = ioTSDKManager.httpRequest("tuya.device.qrcode.info.get", "1.0", params.toJSONString());
-//                            Log.w(TAG, response.toString());
-//                        });
-//
-//                break;
-            case R.id.bool_send:
-                ioTSDKManager.sendDP(101, DPEvent.Type.PROP_BOOL, boolView.isChecked());
-                break;
-            case R.id.int_send:
-                int intVal = Integer.parseInt(intView.getText().toString());
-                ioTSDKManager.sendDP(102, DPEvent.Type.PROP_VALUE, intVal);
-                break;
-            case R.id.string_send:
-                ioTSDKManager.sendDP(104, DPEvent.Type.PROP_STR, strView.getText().toString());
-                break;
-            case R.id.enum_send:
-                int checked = 0;
-                int radioButtonId = enumView.getCheckedRadioButtonId();
-                switch (radioButtonId) {
-                    case R.id.enum_0:
-                        checked = 0;
-                        break;
-                    case R.id.enum_1:
-                        checked = 1;
-                        break;
-                    case R.id.enum_2:
-                        checked = 2;
-                        break;
-                }
-                ioTSDKManager.sendDP(103, DPEvent.Type.PROP_ENUM, checked);
-                break;
-            case R.id.raw_send:
-                ioTSDKManager.sendDPWithTimeStamp(105, DPEvent.Type.PROP_RAW, rawView.getText().toString().getBytes(Charset.forName("UTF-8")), timestamp);
-                break;
-            case R.id.bitmap_send:
-                ioTSDKManager.sendDPWithTimeStamp(106, DPEvent.Type.PROP_BITMAP, Integer.parseInt(bitmapView.getText().toString()), timestamp);
-                break;
-            case R.id.combo_send:
-                DPEvent event0 = new DPEvent(101, (byte) DPEvent.Type.PROP_BOOL, boolView.isChecked(), timestamp);
-                DPEvent event1 = new DPEvent(102, (byte) DPEvent.Type.PROP_VALUE, Integer.parseInt(intView.getText().toString()), timestamp);
-                DPEvent event2 = new DPEvent(105, (byte) DPEvent.Type.PROP_RAW, rawView.getText().toString().getBytes(Charset.forName("UTF-8")), timestamp);
-                DPEvent[] events = {event0, event1, event2};
-                ioTSDKManager.sendDPWithTimeStamp(events);
-                break;
             case R.id.send_dp:
                 ioTSDKManager.sendDP(dpEventAdapter.getCheckedList().toArray(new DPEvent[]{}));
                 break;
             case R.id.send_time:
-                ioTSDKManager.sendDPWithTimeStamp(dpEventAdapter.getCheckedList().toArray(new DPEvent[]{}));
+                DPEvent[] dpEvents = dpEventAdapter.getCheckedList().toArray(new DPEvent[]{});
+                Arrays.stream(dpEvents).forEach(event -> event.timestamp = timestamp);
+                ioTSDKManager.sendDPWithTimeStamp(dpEvents);
                 break;
         }
     }

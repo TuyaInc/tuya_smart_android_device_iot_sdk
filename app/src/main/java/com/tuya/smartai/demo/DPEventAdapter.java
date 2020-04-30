@@ -1,6 +1,9 @@
 package com.tuya.smartai.demo;
 
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.tuya.smartai.iot_sdk.DPEvent;
 
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,8 +39,17 @@ public class DPEventAdapter extends RecyclerView.Adapter<DPEventViewHolder> {
         notifyDataSetChanged();
     }
 
+    public void updateEvent(DPEvent event) {
+        DPEvent aim = mData.stream().filter(e -> e.dpid == event.dpid).findFirst().orElse(null);
+        if (aim != null) {
+            aim.value = event.value;
+            notifyItemChanged(mData.indexOf(aim));
+        }
+    }
+
     List<DPEvent> getCheckedList() {
-        return mData.stream().filter(event -> mCheckMap.get(mData.indexOf(event)))
+        return mData.stream()
+                .filter(event -> mCheckMap.get(mData.indexOf(event)))
                 .collect(Collectors.toList());
     }
 
@@ -49,7 +62,8 @@ public class DPEventAdapter extends RecyclerView.Adapter<DPEventViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull DPEventViewHolder holder, int position) {
-        holder.render(mData.get(position));
+        DPEvent event = mData.get(position);
+        holder.render(event);
         holder.mCheck.setChecked(mCheckMap.get(position));
         holder.mCheck.setOnCheckedChangeListener((buttonView, isChecked) -> mCheckMap.put(position, isChecked));
     }
@@ -88,23 +102,65 @@ class DPEventViewHolder extends RecyclerView.ViewHolder {
 
     void render(DPEvent event) {
         mId.setText(event.dpid + "");
+
         mType.setText(type_strs[event.type]);
 
+        mValue.setInputType(InputType.TYPE_CLASS_TEXT);
         switch (event.type) {
             case DPEvent.Type.PROP_BOOL:
                 mValue.setVisibility(View.GONE);
                 mSwitch.setVisibility(View.VISIBLE);
                 mSpinner.setVisibility(View.GONE);
+
+                mSwitch.setChecked((Boolean) event.value);
+
+                mSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> event.value = isChecked);
                 break;
             case DPEvent.Type.PROP_VALUE:
+            case DPEvent.Type.PROP_ENUM:
+            case DPEvent.Type.PROP_BITMAP:
                 mValue.setInputType(InputType.TYPE_CLASS_PHONE);
             case DPEvent.Type.PROP_STR:
-            case DPEvent.Type.PROP_BITMAP:
             case DPEvent.Type.PROP_RAW:
-            case DPEvent.Type.PROP_ENUM:
                 mValue.setVisibility(View.VISIBLE);
                 mSwitch.setVisibility(View.GONE);
                 mSpinner.setVisibility(View.GONE);
+
+                if (event.type == DPEvent.Type.PROP_RAW) {
+                    if (event.value == null) {
+                        event.value = new byte[]{'0'};
+                    }
+                    mValue.setText(Base64.encodeToString((byte[]) event.value, 0));
+                } else {
+                    mValue.setText(event.value.toString());
+                }
+
+                mValue.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        if (event.type == DPEvent.Type.PROP_RAW) {
+                            event.value = s.toString().getBytes(Charset.forName("UTF-8"));
+                        } else if (event.type == DPEvent.Type.PROP_STR) {
+                            event.value = s.toString();
+                        } else {
+                            try {
+                                event.value = Integer.parseInt(s.toString());
+                            } catch (NumberFormatException e) {
+                                event.value = 0;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
                 break;
         }
     }
