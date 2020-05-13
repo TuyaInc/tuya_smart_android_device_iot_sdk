@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp">
+
+    <TextView
+        android:id="@+id/tv_pid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="10dp"
+        android:padding="5dp"
+        android:text="PID: " />
+
+    <EditText
+        android:id="@+id/et_pid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/tv_pid"
+        android:layout_toRightOf="@id/tv_pid"
+        android:maxLines="1" />
+
+    <TextView
+        android:id="@+id/tv_uid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_pid"
+        android:padding="5dp"
+        android:text="UID: " />
+
+    <EditText
+        android:id="@+id/et_uid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/tv_uid"
+        android:layout_toRightOf="@id/tv_uid"
+        android:maxLines="1" />
+
+    <TextView
+        android:id="@+id/tv_ak"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_uid"
+        android:padding="5dp"
+        android:text="AUTHKEY: " />
+
+    <EditText
+        android:id="@+id/et_ak"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/tv_ak"
+        android:layout_toRightOf="@id/tv_ak"
+        android:maxLines="1" />
+
+</RelativeLayout>

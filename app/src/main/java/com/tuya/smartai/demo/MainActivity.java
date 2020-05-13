@@ -4,10 +4,15 @@ import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -49,6 +54,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     AlertDialog dialog;
     AlertDialog upgradeDialog;
+    AlertDialog configDialog;
+
+    String mPid;
+    String mUid;
+    String mAk;
 
     private RecyclerView dpList;
     private DPEventAdapter dpEventAdapter;
@@ -90,13 +100,37 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 .setPositiveButton("确认", (dialog1, which) -> ioTSDKManager.startUpgradeDownload())
                 .create();
 
+        View configView = LayoutInflater.from(this).inflate(R.layout.config_layout, null);
+        EditText pid = configView.findViewById(R.id.et_pid);
+        EditText uid = configView.findViewById(R.id.et_uid);
+        EditText ak = configView.findViewById(R.id.et_ak);
+
+        configDialog = new AlertDialog.Builder(MainActivity.this)
+                .setCancelable(false)
+                .setView(configView)
+                .setTitle("配置")
+                .setPositiveButton("确认", (dialog1, which) -> {
+                    mPid = pid.getText().toString();
+                    mUid = uid.getText().toString();
+                    mAk = ak.getText().toString();
+
+                    if (!EasyPermissions.hasPermissions(this, requiredPermissions)) {
+                        EasyPermissions.requestPermissions(this, "需要授予权限以使用设备", PERMISSION_CODE, requiredPermissions);
+                    } else {
+                        initSDK();
+                    }
+                })
+                .create();
+
+        configDialog.setOnShowListener(dialog -> {
+            pid.setText(!TextUtils.isEmpty(BuildConfig.PID) ? BuildConfig.PID : "");
+            uid.setText(!TextUtils.isEmpty(BuildConfig.UUID) ? BuildConfig.UUID : "");
+            ak.setText(!TextUtils.isEmpty(BuildConfig.AUTHOR_KEY) ? BuildConfig.AUTHOR_KEY : "");
+        });
+
         initDPViews();
 
-        if (!EasyPermissions.hasPermissions(this, requiredPermissions)) {
-            EasyPermissions.requestPermissions(this, "需要授予权限以使用设备", PERMISSION_CODE, requiredPermissions);
-        } else {
-            initSDK();
-        }
+        configDialog.show();
     }
 
     private void initDPViews() {
@@ -123,8 +157,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         output("固件版本：" + BuildConfig.VERSION_NAME);
 
         //注意：这里的pid等配置读取自local.properties文件，不能直接使用。请填写你自己的配置！
-        ioTSDKManager.initSDK("/sdcard/", BuildConfig.PID
-                , BuildConfig.UUID, BuildConfig.AUTHOR_KEY, BuildConfig.VERSION_NAME, new IoTSDKManager.IoTCallback() {
+        ioTSDKManager.initSDK("/sdcard/", mPid
+                , mUid, mAk, BuildConfig.VERSION_NAME, new IoTSDKManager.IoTCallback() {
 
                     @Override
                     public void onDpEvent(DPEvent event) {
