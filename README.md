@@ -175,7 +175,7 @@ ioTSDKManager = new IoTSDKManager(this) {
 ### OTA
 > 版本区分：根据`ioTSDKManager.initSDK `传入的`version`区分固件版本， 打新固件包时修改version（三位数字版本，如：1.2.3）
 
-支持设备端检测升级和APP触发升级，设置下面的回调后，在后台上传新版本固件。之后会受到更新信息回调，此时就可以触发`ioTSDKManager.startUpgradeDownload `开始升级下载。
+支持设备端检测升级和APP触发升级，设置下面的回调后，在后台上传新版本固件(请将升级文件压缩为zip格式)。之后会收到更新信息回调，此时就可以触发`ioTSDKManager.startUpgradeDownload `开始升级下载。
 
 ```java 
 ioTSDKManager.setUpgradeCallback(new UpgradeEventCallback() {
