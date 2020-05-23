@@ -4,14 +4,13 @@ import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -172,6 +171,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     @Override
                     public void onReset() {
 
+                        getSharedPreferences("event_cache", MODE_PRIVATE).edit().clear().commit();
+
                         runOnUiThread(() -> dialog.show());
                     }
 
@@ -217,8 +218,33 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                             case IoTSDKManager.STATUS_MQTT_ONLINE:
                                 // 网络在线MQTT在线
 
+                                SharedPreferences sp = getSharedPreferences("event_cache", MODE_PRIVATE);
+
                                 DPEvent[] events = ioTSDKManager.getEvents();
-                                dpEventAdapter = new DPEventAdapter(Arrays.stream(events).filter(Objects::nonNull).collect(Collectors.toList()));
+                                dpEventAdapter = new DPEventAdapter(Arrays.stream(events)
+                                        .peek(event -> {
+                                            if (sp.contains(event.dpid + "")
+                                                    && !TextUtils.isEmpty(sp.getString(event.dpid + "", ""))) {
+                                                String valueStr = sp.getString(event.dpid + "", "");
+                                                switch (event.type) {
+                                                    case DPEvent.Type.PROP_STR:
+                                                        event.value = valueStr;
+                                                        break;
+                                                    case DPEvent.Type.PROP_ENUM:
+                                                    case DPEvent.Type.PROP_VALUE:
+                                                    case DPEvent.Type.PROP_BITMAP:
+                                                        event.value = Integer.parseInt(valueStr);
+                                                        break;
+                                                    case DPEvent.Type.PROP_BOOL:
+                                                        event.value = Boolean.parseBoolean(valueStr);
+                                                        break;
+                                                    case DPEvent.Type.PROP_RAW:
+                                                        event.value = valueStr.getBytes();
+                                                        break;
+                                                }
+                                            }
+                                        })
+                                        .filter(Objects::nonNull).collect(Collectors.toList()));
 
                                 runOnUiThread(() -> {
                                     dpList.setAdapter(dpEventAdapter);
@@ -315,6 +341,13 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        save();
+        System.exit(0);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         if (httpdisposable != null) {
@@ -323,6 +356,34 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         if (ioTSDKManager != null) {
             ioTSDKManager.destroy();
+        }
+        Log.w(TAG, "onDestroy");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.w(TAG, "onPause");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        save();
+        Log.w(TAG, "onStop");
+    }
+
+    private void save() {
+        if (dpEventAdapter != null) {
+            SharedPreferences sp = getSharedPreferences("event_cache", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            for (DPEvent event : dpEventAdapter.getData()) {
+                if (event.type == DPEvent.Type.PROP_RAW) {
+                    editor.putString(event.dpid + "", new String((byte[]) event.value));
+                } else
+                    editor.putString(event.dpid + "", event.value.toString());
+            }
+            editor.commit();
         }
     }
 }

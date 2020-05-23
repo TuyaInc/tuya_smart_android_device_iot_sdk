@@ -1,5 +1,6 @@
 package com.tuya.smartai.demo;
 
+import android.content.SharedPreferences;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -45,6 +46,10 @@ public class DPEventAdapter extends RecyclerView.Adapter<DPEventViewHolder> {
             aim.value = event.value;
             notifyItemChanged(mData.indexOf(aim));
         }
+    }
+
+    List<DPEvent> getData() {
+        return mData;
     }
 
     List<DPEvent> getCheckedList() {
@@ -130,7 +135,8 @@ class DPEventViewHolder extends RecyclerView.ViewHolder {
                     if (event.value == null) {
                         event.value = new byte[]{'0'};
                     }
-                    mValue.setText(Base64.encodeToString((byte[]) event.value, 0));
+
+                    mValue.setText(new String((byte[]) event.value));
                 } else {
                     mValue.setText(event.value.toString());
                 }
