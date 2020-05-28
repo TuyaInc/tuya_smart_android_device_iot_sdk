@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -23,7 +24,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alibaba.fastjson.JSONObject;
 import com.tuya.smartai.iot_sdk.DPEvent;
 import com.tuya.smartai.iot_sdk.IoTSDKManager;
-import com.tuya.smartai.iot_sdk.Log;
 import com.tuya.smartai.iot_sdk.UpgradeEventCallback;
 
 import java.util.Arrays;
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 .create();
 
         upgradeDialog = new AlertDialog.Builder(MainActivity.this)
-                .setCancelable(false)
+                .setCancelable(true)
                 .setTitle("提示")
                 .setMessage("有新版本，确认开始下载")
                 .setPositiveButton("确认", (dialog1, which) -> ioTSDKManager.startUpgradeDownload())
@@ -144,8 +144,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void initSDK() {
-
-        Log.init(this, "/sdcard/tuya_log/iot_demo/", 3);
 
         ioTSDKManager = new IoTSDKManager(this) {
             @Override
@@ -273,9 +271,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
                 output("收到升级信息: " + s);
 
-//                runOnUiThread(() -> upgradeDialog.show());
-
-                ioTSDKManager.startUpgradeDownload();
+                runOnUiThread(() -> upgradeDialog.show());
             }
 
             @Override
@@ -361,9 +357,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (ioTSDKManager != null) {
             ioTSDKManager.destroy();
         }
-
-        Log.close();
-
         Log.w(TAG, "onDestroy");
     }
 
