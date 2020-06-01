@@ -20,3 +20,4 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 -keep class com.tuya.smartai.iot_sdk.** {*;}
+-keep class com.tencent.mars.** {*;}
