@@ -27,6 +27,7 @@ import com.tuya.smartai.iot_sdk.Log;
 import com.tuya.smartai.iot_sdk.UpgradeEventCallback;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -319,7 +320,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (ioTSDKManager == null) {
             return;
         }
-        int timestamp = (int) (System.currentTimeMillis() / 1000L);
+        int timestamp = (int) (System.currentTimeMillis() / 1000L) - 60 * 10;
         switch (v.getId()) {
             case R.id.reset:
                 ioTSDKManager.reset();
