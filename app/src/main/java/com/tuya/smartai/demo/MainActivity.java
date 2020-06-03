@@ -4,30 +4,32 @@ import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioGroup;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.tuya.smartai.iot_sdk.DPEvent;
 import com.tuya.smartai.iot_sdk.IoTSDKManager;
+import com.tuya.smartai.iot_sdk.Log;
+import com.tuya.smartai.iot_sdk.UpgradeEventCallback;
 
-import java.lang.reflect.Array;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import io.reactivex.disposables.Disposable;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -47,17 +49,18 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     IoTSDKManager ioTSDKManager;
 
     ImageView qrCode;
-    TextView shortUrl;
     TextView console;
 
-    Switch boolView;
-    EditText intView;
-    RadioGroup enumView;
-    EditText strView;
-    EditText rawView;
-    EditText bitmapView;
-
     AlertDialog dialog;
+    AlertDialog upgradeDialog;
+    AlertDialog configDialog;
+
+    String mPid;
+    String mUid;
+    String mAk;
+
+    private RecyclerView dpList;
+    private DPEventAdapter dpEventAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,10 +74,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             clear();
             return false;
         });
-        shortUrl = findViewById(R.id.shorturl);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        dialog = builder
+        dialog = new AlertDialog.Builder(MainActivity.this)
                 .setCancelable(false)
                 .setTitle("提示")
                 .setMessage("重启APP完成解绑")
@@ -91,34 +92,60 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 })
                 .create();
 
+        upgradeDialog = new AlertDialog.Builder(MainActivity.this)
+                .setCancelable(false)
+                .setTitle("提示")
+                .setMessage("有新版本，确认开始下载")
+                .setPositiveButton("确认", (dialog1, which) -> ioTSDKManager.startUpgradeDownload())
+                .create();
+
+        View configView = LayoutInflater.from(this).inflate(R.layout.config_layout, null);
+        EditText pid = configView.findViewById(R.id.et_pid);
+        EditText uid = configView.findViewById(R.id.et_uid);
+        EditText ak = configView.findViewById(R.id.et_ak);
+
+        configDialog = new AlertDialog.Builder(MainActivity.this)
+                .setCancelable(false)
+                .setView(configView)
+                .setTitle("配置")
+                .setPositiveButton("确认", (dialog1, which) -> {
+                    mPid = pid.getText().toString();
+                    mUid = uid.getText().toString();
+                    mAk = ak.getText().toString();
+
+                    if (!EasyPermissions.hasPermissions(this, requiredPermissions)) {
+                        EasyPermissions.requestPermissions(this, "需要授予权限以使用设备", PERMISSION_CODE, requiredPermissions);
+                    } else {
+                        initSDK();
+                    }
+                })
+                .create();
+
+        configDialog.setOnShowListener(dialog -> {
+            pid.setText(!TextUtils.isEmpty(BuildConfig.PID) ? BuildConfig.PID : "");
+            uid.setText(!TextUtils.isEmpty(BuildConfig.UUID) ? BuildConfig.UUID : "");
+            ak.setText(!TextUtils.isEmpty(BuildConfig.AUTHOR_KEY) ? BuildConfig.AUTHOR_KEY : "");
+        });
+
         initDPViews();
 
-        if (!EasyPermissions.hasPermissions(this, requiredPermissions)) {
-            EasyPermissions.requestPermissions(this, "需要授予权限以使用设备", PERMISSION_CODE, requiredPermissions);
-        } else {
-            initSDK();
-        }
+        configDialog.show();
     }
 
     private void initDPViews() {
 
-        findViewById(R.id.bool_send).setOnClickListener(this::onClick);
-        findViewById(R.id.int_send).setOnClickListener(this::onClick);
-        findViewById(R.id.enum_send).setOnClickListener(this::onClick);
-        findViewById(R.id.string_send).setOnClickListener(this::onClick);
-        findViewById(R.id.bitmap_send).setOnClickListener(this::onClick);
-        findViewById(R.id.raw_send).setOnClickListener(this::onClick);
-        findViewById(R.id.combo_send).setOnClickListener(this::onClick);
+        findViewById(R.id.send_dp).setOnClickListener(this::onClick);
+        findViewById(R.id.send_time).setOnClickListener(this::onClick);
 
-        boolView = findViewById(R.id.bool_val);
-        intView = findViewById(R.id.int_val);
-        enumView = findViewById(R.id.enum_val);
-        strView = findViewById(R.id.string_val);
-        rawView = findViewById(R.id.raw_val);
-        bitmapView = findViewById(R.id.bitmap_val);
+        dpList = findViewById(R.id.dp_list);
+
+        dpList.setLayoutManager(new LinearLayoutManager(this));
+
     }
 
     private void initSDK() {
+
+        Log.init(this, "/sdcard/tuya_log/iot_demo/", 3);
 
         ioTSDKManager = new IoTSDKManager(this) {
             @Override
@@ -128,19 +155,25 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             }
         };
 
+        output("固件版本：" + BuildConfig.VERSION_NAME);
+
         //注意：这里的pid等配置读取自local.properties文件，不能直接使用。请填写你自己的配置！
-        ioTSDKManager.initSDK("/sdcard/", "xqcwrcjnq6smfygq"
-                , BuildConfig.UUID, BuildConfig.AUTHOR_KEY, new IoTSDKManager.IoTCallback() {
+        ioTSDKManager.initSDK("/sdcard/", mPid
+                , mUid, mAk, BuildConfig.VERSION_NAME, new IoTSDKManager.IoTCallback() {
 
                     @Override
                     public void onDpEvent(DPEvent event) {
                         if (event != null) {
                             output("收到 dp: " + event);
+
+                            runOnUiThread(() -> dpEventAdapter.updateEvent(event));
                         }
                     }
 
                     @Override
                     public void onReset() {
+
+                        getSharedPreferences("event_cache", MODE_PRIVATE).edit().clear().commit();
 
                         runOnUiThread(() -> dialog.show());
                     }
@@ -152,7 +185,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         String url = (String) JSONObject.parseObject(urlJson).get("shortUrl");
 
                         runOnUiThread(() -> {
-                            shortUrl.setText("用涂鸦智能APP扫码激活");
+                            qrCode.setVisibility(View.VISIBLE);
+                            output("用涂鸦智能APP扫码激活");
                             qrCode.setImageBitmap(QRCodeUtil.createQRCodeBitmap(url, 400, 400));
                         });
                     }
@@ -162,7 +196,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         output("onActive: devId-> " + ioTSDKManager.getDeviceId());
 
                         runOnUiThread(() -> {
-                            shortUrl.setText("激活成功了");
+                            qrCode.setVisibility(View.GONE);
+                            output("激活成功了");
                         });
                     }
 
@@ -184,11 +219,84 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                                 break;
                             case IoTSDKManager.STATUS_MQTT_ONLINE:
                                 // 网络在线MQTT在线
+
+                                SharedPreferences sp = getSharedPreferences("event_cache", MODE_PRIVATE);
+
+                                DPEvent[] events = ioTSDKManager.getEvents();
+                                dpEventAdapter = new DPEventAdapter(Arrays.stream(events)
+                                        .peek(event -> {
+                                            if (sp.contains(event.dpid + "")
+                                                    && !TextUtils.isEmpty(sp.getString(event.dpid + "", ""))) {
+                                                String valueStr = sp.getString(event.dpid + "", "");
+                                                switch (event.type) {
+                                                    case DPEvent.Type.PROP_STR:
+                                                        event.value = valueStr;
+                                                        break;
+                                                    case DPEvent.Type.PROP_ENUM:
+                                                    case DPEvent.Type.PROP_VALUE:
+                                                    case DPEvent.Type.PROP_BITMAP:
+                                                        event.value = Integer.parseInt(valueStr);
+                                                        break;
+                                                    case DPEvent.Type.PROP_BOOL:
+                                                        event.value = Boolean.parseBoolean(valueStr);
+                                                        break;
+                                                    case DPEvent.Type.PROP_RAW:
+                                                        event.value = valueStr.getBytes();
+                                                        break;
+                                                }
+                                            }
+                                        })
+                                        .filter(Objects::nonNull).collect(Collectors.toList()));
+
+                                runOnUiThread(() -> {
+                                    dpList.setAdapter(dpEventAdapter);
+                                    findViewById(R.id.send_dp).setEnabled(true);
+                                    findViewById(R.id.send_time).setEnabled(true);
+                                });
+
+                                if (events != null) {
+                                    for (DPEvent event : events) {
+                                        if (event != null) {
+                                            output(event.toString());
+                                        }
+                                    }
+                                }
                                 break;
                         }
                     }
                 });
 
+        ioTSDKManager.setUpgradeCallback(new UpgradeEventCallback() {
+            @Override
+            public void onUpgradeInfo(String s) {
+                Log.w(TAG, "onUpgradeInfo: " + s);
+
+                output("收到升级信息: " + s);
+
+//                runOnUiThread(() -> upgradeDialog.show());
+
+                ioTSDKManager.startUpgradeDownload();
+            }
+
+            @Override
+            public void onUpgradeDownloadStart() {
+                Log.w(TAG, "onUpgradeDownloadStart");
+
+                output("开始升级下载");
+            }
+
+            @Override
+            public void onUpgradeDownloadUpdate(int i) {
+                Log.w(TAG, "onUpgradeDownloadUpdate: " + i);
+            }
+
+            @Override
+            public void upgradeFileDownloadFinished(int result, String file) {
+                Log.w(TAG, "upgradeFileDownloadFinished: " + result);
+
+                output("下载完成：" + result + " / " + file);
+            }
+        });
     }
 
     @Override
@@ -216,60 +324,13 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             case R.id.reset:
                 ioTSDKManager.reset();
                 break;
-//            case R.id.http:
-//                JSONObject params = new JSONObject();
-//                params.put("uuid", "1234");
-//                params.put("appId", "10000");
-//
-//                if (httpdisposable != null) {
-//                    httpdisposable.dispose();
-//                }
-//                httpdisposable = Observable.just(0)
-//                        .subscribeOn(Schedulers.io())
-//                        .subscribe(integer -> {
-//                            HttpResponse response = ioTSDKManager.httpRequest("tuya.device.qrcode.info.get", "1.0", params.toJSONString());
-//                            Log.w(TAG, response.toString());
-//                        });
-//
-//                break;
-            case R.id.bool_send:
-                ioTSDKManager.sendDP(101, DPEvent.Type.PROP_BOOL, boolView.isChecked());
+            case R.id.send_dp:
+                ioTSDKManager.sendDP(dpEventAdapter.getCheckedList().toArray(new DPEvent[]{}));
                 break;
-            case R.id.int_send:
-                int intVal = Integer.parseInt(intView.getText().toString());
-                ioTSDKManager.sendDP(102, DPEvent.Type.PROP_VALUE, intVal);
-                break;
-            case R.id.string_send:
-                ioTSDKManager.sendDP(104, DPEvent.Type.PROP_STR, strView.getText().toString());
-                break;
-            case R.id.enum_send:
-                int checked = 0;
-                int radioButtonId = enumView.getCheckedRadioButtonId();
-                switch (radioButtonId) {
-                    case R.id.enum_0:
-                        checked = 0;
-                        break;
-                    case R.id.enum_1:
-                        checked = 1;
-                        break;
-                    case R.id.enum_2:
-                        checked = 2;
-                        break;
-                }
-                ioTSDKManager.sendDP(103, DPEvent.Type.PROP_ENUM, checked);
-                break;
-            case R.id.raw_send:
-                ioTSDKManager.sendDPWithTimeStamp(105, DPEvent.Type.PROP_RAW, rawView.getText().toString().getBytes(Charset.forName("UTF-8")), timestamp);
-                break;
-            case R.id.bitmap_send:
-                ioTSDKManager.sendDPWithTimeStamp(106, DPEvent.Type.PROP_BITMAP, Integer.parseInt(bitmapView.getText().toString()), timestamp);
-                break;
-            case R.id.combo_send:
-                DPEvent event0 = new DPEvent(101, (byte) DPEvent.Type.PROP_BOOL, boolView.isChecked(), timestamp);
-                DPEvent event1 = new DPEvent(102, (byte) DPEvent.Type.PROP_VALUE, Integer.parseInt(intView.getText().toString()), timestamp);
-                DPEvent event2 = new DPEvent(105, (byte) DPEvent.Type.PROP_RAW, rawView.getText().toString().getBytes(Charset.forName("UTF-8")), timestamp);
-                DPEvent[] events = {event0, event1, event2};
-                ioTSDKManager.sendDPWithTimeStamp(events);
+            case R.id.send_time:
+                DPEvent[] dpEvents = dpEventAdapter.getCheckedList().toArray(new DPEvent[]{});
+                Arrays.stream(dpEvents).forEach(event -> event.timestamp = timestamp);
+                ioTSDKManager.sendDPWithTimeStamp(dpEvents);
                 break;
         }
     }
@@ -284,6 +345,13 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        save();
+        System.exit(0);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         if (httpdisposable != null) {
@@ -292,6 +360,37 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         if (ioTSDKManager != null) {
             ioTSDKManager.destroy();
+        }
+
+        Log.close();
+
+        Log.w(TAG, "onDestroy");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.w(TAG, "onPause");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        save();
+        Log.w(TAG, "onStop");
+    }
+
+    private void save() {
+        if (dpEventAdapter != null) {
+            SharedPreferences sp = getSharedPreferences("event_cache", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            for (DPEvent event : dpEventAdapter.getData()) {
+                if (event.type == DPEvent.Type.PROP_RAW) {
+                    editor.putString(event.dpid + "", new String((byte[]) event.value));
+                } else
+                    editor.putString(event.dpid + "", event.value.toString());
+            }
+            editor.commit();
         }
     }
 }
