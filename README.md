@@ -116,6 +116,11 @@ IoTSDKManager.reset();
      * 发送dp事件
      * @param id dp id
      * @param type 类型 DPEvent.Type
+     * DPEvent.Type.PROP_BOOL   boolean
+     * DPEvent.Type.PROP_VALUE  int
+     * DPEvent.Type.PROP_STR    string
+     * DPEvent.Type.PROP_ENUM   int
+     * DPEvent.Type.PROP_RAW    byte[]
      * @param val 值
      * @return
      */
