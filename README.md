@@ -107,6 +107,22 @@ public interface IoTCallback {
 ioTSDKManager.destroy();
 ```
 
+### 测试
+测试阶段建议开启日志服务, sdk的日志会自动保存在你传入的路径, 遇到问题可将日志文件发给开发同学debug。
+
+```java
+/**
+     * 开启本地日志服务
+     * @param logPath 日志文件保存路径 示例："/sdcard/tuya_log/"
+     * @param cacheDays 日志文件缓存天数
+     * @return
+     */
+Log.init(context, logPath, cacheDays);
+
+//销毁本地日志服务, 活动结束时调用
+Log.close();
+```
+
 ### API
 ```java
 //本地解绑
