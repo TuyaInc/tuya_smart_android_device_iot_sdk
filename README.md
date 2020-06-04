@@ -48,7 +48,7 @@ IoTSDKManager ioTSDKManager = new IoTSDKManager(context);
 
 /**
      * 初始化SDK (注意！ 一个uuid不能同时在多个设备上激活)
-     * @param basePath  存储路径
+     * @param basePath  存储路径 示例："/sdcard/tuya_iot/"
      * @param productId 产品id
      * @param uuid  用户id
      * @param authKey 认证key

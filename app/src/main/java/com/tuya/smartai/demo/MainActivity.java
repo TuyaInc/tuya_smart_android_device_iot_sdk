@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         output("固件版本：" + BuildConfig.VERSION_NAME);
 
         //注意：这里的pid等配置读取自local.properties文件，不能直接使用。请填写你自己的配置！
-        ioTSDKManager.initSDK("/sdcard/", mPid
+        ioTSDKManager.initSDK("/sdcard/tuya_iot/", mPid
                 , mUid, mAk, BuildConfig.VERSION_NAME, new IoTSDKManager.IoTCallback() {
 
                     @Override
