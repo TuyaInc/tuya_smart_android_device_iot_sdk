@@ -109,6 +109,7 @@ ioTSDKManager.destroy();
 
 ### 测试
 测试阶段建议开启日志服务, sdk的日志会自动保存在你传入的路径, 遇到问题可将日志文件发给开发同学debug。
+> **注意** 生产阶段建议去除
 
 ```java
 /**
@@ -119,7 +120,7 @@ ioTSDKManager.destroy();
      */
 Log.init(context, logPath, cacheDays);
 
-//销毁本地日志服务, 活动结束时调用
+//销毁本地日志服务, 活动结束或应用退出时调用
 Log.close();
 ```
 
