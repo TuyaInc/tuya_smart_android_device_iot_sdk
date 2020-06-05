@@ -76,7 +76,7 @@ public interface IoTCallback {
                  */
         void onDpEvent(DPEvent event);
 
-        //解绑设备(解绑时需要重启APP进程，否则会影响二次配网)
+        //解绑设备回调 (请在此处重启APP进程，否则会影响二次配网)
         void onReset();
 
         //收到配网二维码短链（获取失败时为null）
@@ -120,13 +120,16 @@ ioTSDKManager.destroy();
      */
 Log.init(context, logPath, cacheDays);
 
+//刷写日志文件，可以在需要的时候手动触发。isSync : true 为同步 flush，flush 结束后才会返回。 false 为异步 flush，不等待 flush 结束就返回。
+Log.flush(isSync)
+
 //销毁本地日志服务, 活动结束或应用退出时调用
 Log.close();
 ```
 
 ### API
 ```java
-//本地解绑
+//本地解绑 (异步操作，解绑成功会进入onReset回调)
 IoTSDKManager.reset();
 
 /**
