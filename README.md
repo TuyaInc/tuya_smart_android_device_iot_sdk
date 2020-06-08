@@ -1,7 +1,8 @@
 ## Android IoT SDK
 
 ### demo使用
-demo 提供了获取激活码、激活、dp点测试、状态日志展示等功能。
+demo 提供了获取激活码、激活、dp点测试、状态日志展示等功能。  
+[安装包体验](./app/release/app-release.apk)
 
 > **注意** 开始前，需要将激活传入的pid、uuid、authkey配置,
 
