@@ -8,7 +8,7 @@ demo 提供了获取激活码、激活、dp点测试、状态日志展示等功�
 
 **三种配置方式：**  
 
-1.在你的`local.properties`文件中增加如下:    
+1.在你的`local.properties`文件中增加如下（自己编译demo代码使用该方式，直接安装APK请使用后两种）:    
 
 ```java
 UUID=你的uuid  
