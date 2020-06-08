@@ -2,13 +2,32 @@
 
 ### demo使用
 demo 提供了获取激活码、激活、dp点测试、状态日志展示等功能。
-> **注意** 激活传入的pid、uuid、authkey需要在本地配置中填写,
-> 在你的`local.properties`文件中增加如下:    
-> UUID=你的uuid  
-> AUTHKEY=你的key  
-> PID=你的pid
 
-<img src="./demo_screenshot.jpeg" width = "40%" height = "20%" align=center />
+> **注意** 开始前，要将激活传入的pid、uuid、authkey需要在配置中填写,
+
+**三种配置方式：**  
+
+1.在你的`local.properties`文件中增加如下:    
+
+```java
+UUID=你的uuid  
+AUTHKEY=你的key  
+PID=你的pid
+```  
+2.在配置弹窗中编辑（截图所示）  
+3.生成配置二维码，进入demo时扫码（截图所示）  
+二维码生成方式：将下面的配置json生成二维码，[生成工具](https://cli.im/text)
+
+```json
+{
+	"PID": "你的PID",
+	"UUID": "你的UUID",
+	"AUTHKEY": "你的AUTHKEY"
+}
+```
+
+
+<img src="./screenshots/ss0.jpg" width = "30%" height = "20%" align=center /> <img src="./screenshots/ss1.jpg" width = "30%" height = "20%" align=center /> <img src="./screenshots/ss2.jpg" width = "30%" height = "20%" align=center />
 
 ### 接入
 

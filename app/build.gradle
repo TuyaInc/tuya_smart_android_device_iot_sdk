@@ -46,8 +46,9 @@ dependencies {
     implementation 'pub.devrel:easypermissions:2.0.1'
     api 'com.alibaba:fastjson:1.1.67.android'
     api 'io.reactivex.rxjava2:rxjava:2.2.8'
-    implementation 'com.google.zxing:core:3.3.0'
+//    implementation 'com.google.zxing:core:3.3.0'
 
     implementation 'com.tuya.smart:tuyasmart-iot_sdk:1.0.7-rc.1'
     implementation 'com.tencent.mars:mars-xlog:1.2.3'
+    implementation 'cn.yipianfengye.android:zxing-library:2.2'
 }

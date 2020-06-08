@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,9 +26,11 @@ import com.tuya.smartai.iot_sdk.DPEvent;
 import com.tuya.smartai.iot_sdk.IoTSDKManager;
 import com.tuya.smartai.iot_sdk.Log;
 import com.tuya.smartai.iot_sdk.UpgradeEventCallback;
+import com.uuzuche.lib_zxing.activity.CaptureActivity;
+import com.uuzuche.lib_zxing.activity.CodeUtils;
+import com.uuzuche.lib_zxing.activity.ZXingLibrary;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -62,11 +65,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     private RecyclerView dpList;
     private DPEventAdapter dpEventAdapter;
+    private final int QR_REQUEST_CODE = 0x34;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ZXingLibrary.initDisplayOpinion(this);
 
         findViewById(R.id.reset).setOnClickListener(this::onClick);
         qrCode = findViewById(R.id.qrcode);
@@ -120,6 +126,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         initSDK();
                     }
                 })
+                .setNeutralButton("扫码导入", (dialog2, which) -> {
+                    Intent intent = new Intent(MainActivity.this, CaptureActivity.class);
+                    startActivityForResult(intent, QR_REQUEST_CODE);
+                })
                 .create();
 
         configDialog.setOnShowListener(dialog -> {
@@ -131,6 +141,39 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         initDPViews();
 
         configDialog.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == QR_REQUEST_CODE) {
+            configDialog.show();
+
+            if (data != null) {
+                Bundle extras = data.getExtras();
+                if (extras != null && extras.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
+                    String result = extras.getString(CodeUtils.RESULT_STRING);
+                    JSONObject object = JSONObject.parseObject(result);
+                    mUid = object.getString("UUID");
+                    mPid = object.getString("PID");
+                    mAk = object.getString("AUTHKEY");
+
+                    if (TextUtils.isEmpty(mUid) || TextUtils.isEmpty(mPid) || TextUtils.isEmpty(mAk)) {
+                        return;
+                    }
+
+                    if (configDialog.isShowing()) {
+                        configDialog.hide();
+                    }
+
+                    if (!EasyPermissions.hasPermissions(this, requiredPermissions)) {
+                        EasyPermissions.requestPermissions(this, "需要授予权限以使用设备", PERMISSION_CODE, requiredPermissions);
+                    } else {
+                        initSDK();
+                    }
+                }
+            }
+        }
     }
 
     private void initDPViews() {
@@ -157,6 +200,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         };
 
         output("固件版本：" + BuildConfig.VERSION_NAME);
+
+        output("init sdk：" + mPid + "/" + mUid + "/" + mAk);
 
         //注意：这里的pid等配置读取自local.properties文件，不能直接使用。请填写你自己的配置！
         ioTSDKManager.initSDK("/sdcard/tuya_iot/", mPid
@@ -188,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         runOnUiThread(() -> {
                             qrCode.setVisibility(View.VISIBLE);
                             output("用涂鸦智能APP扫码激活");
-                            qrCode.setImageBitmap(QRCodeUtil.createQRCodeBitmap(url, 400, 400));
+                            qrCode.setImageBitmap(CodeUtils.createImage(url, 400, 400, null));
                         });
                     }
 
