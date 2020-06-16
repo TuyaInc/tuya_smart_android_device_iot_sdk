@@ -48,7 +48,7 @@ dependencies {
     api 'io.reactivex.rxjava2:rxjava:2.2.8'
 //    implementation 'com.google.zxing:core:3.3.0'
 
-    implementation 'com.tuya.smart:tuyasmart-iot_sdk:1.0.7-rc.1'
+    implementation 'com.tuya.smart:tuyasmart-iot_sdk:1.0.7'
     implementation 'com.tencent.mars:mars-xlog:1.2.3'
     implementation 'cn.yipianfengye.android:zxing-library:2.2'
 }

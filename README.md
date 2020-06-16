@@ -35,7 +35,7 @@ PID=你的pid
 * 依赖
 
 ```
-implementation 'com.tuya.smart:tuyasmart-iot_sdk:1.0.7-rc.1'
+implementation 'com.tuya.smart:tuyasmart-iot_sdk:1.0.7'
 implementation 'com.tencent.mars:mars-xlog:1.2.3'
 ```
 
