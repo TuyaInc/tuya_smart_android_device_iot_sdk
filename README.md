@@ -42,8 +42,7 @@ implementation 'com.tencent.mars:mars-xlog:1.2.3'
 > 在项目根目录build.gradle中添加仓库地址
 
 ```groovy
-maven { url 'https://maven-other.tuya.com/repository/maven-releases/'}
-maven { url 'https://maven-other.tuya.com/repository/maven-snapshots/'}
+maven { url 'https://dl.bintray.com/tuyasmartai/sdk' }
 ```
 
 * 混淆  
