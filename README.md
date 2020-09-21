@@ -206,7 +206,10 @@ IoTSDKManager.httpRequest(String apiName, String apiVersion, String jsonMsg)
 
 
 //获取设备id
-IoTSDKManager.getDeviceId()
+String IoTSDKManager.getDeviceId()
+
+//获取服务器时间
+int IoTSDKManager.getUniTime()
 
 //自定义实现网络状态监测，返回值为网络是否离线。SDK已提供默认实现，如无需要不必扩展此方法。
 ioTSDKManager = new IoTSDKManager(this) {
