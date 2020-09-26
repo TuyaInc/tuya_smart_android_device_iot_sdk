@@ -1,6 +1,6 @@
 ## Android IoT SDK 
 
-[ ![Download](https://api.bintray.com/packages/tuyasmartai/sdk/tuyasmart-iot_sdk/images/download.svg)](https://bintray.com/tuyasmartai/sdk/tuyasmart-iot_sdk/)
+<!--[ ![Download](https://api.bintray.com/packages/tuyasmartai/sdk/tuyasmart-iot_sdk/images/download.svg)](https://bintray.com/tuyasmartai/sdk/tuyasmart-iot_sdk/)-->
 
 ### demo使用
 demo 提供了获取激活码、激活、dp点测试、状态日志展示等功能。  
@@ -37,7 +37,7 @@ PID=你的pid
 * 依赖
 
 ```
-implementation 'com.tuya.smart:tuyasmart-iot_sdk:x.x.x'
+implementation 'com.tuya.smart:tuyasmart-iot_sdk:1.0.8'
 implementation 'com.tencent.mars:mars-xlog:1.2.3'
 ```
 
