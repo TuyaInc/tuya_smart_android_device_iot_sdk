@@ -68,7 +68,7 @@ maven { url 'https://dl.bintray.com/tuyasmartai/sdk' }
 IoTSDKManager ioTSDKManager = new IoTSDKManager(context);
 
 /**
-     * 初始化SDK (注意！ 一个uuid不能同时在多个设备上激活)
+     * 初始化SDK (注意！ 1.一个uuid不能同时在多个设备上激活；2.同一个进程只能初始化一次，退出时需要杀掉初始化所在进程)
      * @param basePath  存储路径 示例："/sdcard/tuya_iot/"
      * @param productId 产品id
      * @param uuid  用户id
