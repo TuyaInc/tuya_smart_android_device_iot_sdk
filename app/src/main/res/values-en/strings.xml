@@ -12,19 +12,19 @@
 
     <string name="permission_quest_info">Need to grant permission to use device</string>
 
-    <string name="scan">Scan to import</string>
+    <string name="scan">Scan QR Code to Import</string>
 
-    <string name="hw_version">Firmware version</string>
+    <string name="hw_version">Firmware Version</string>
 
-    <string name="app_tips">Scan code to activate with Tuya Smart APP</string>
+    <string name="app_tips">Scan QR Code with Tuya Smart App to Activate</string>
 
-    <string name="config_success">Activated successfully</string>
+    <string name="config_success">Successfully Activated</string>
 
-    <string name="log_tips">The receiving log is output here (long press to clear)</string>
+    <string name="log_tips">Output Received Logs Here (Press and Hold to Clear):</string>
 
-    <string name="unbind">unbind device</string>
+    <string name="unbind">Unbind Device</string>
 
-    <string name="send_dp">send dp</string>
+    <string name="send_dp">Send DP</string>
 
-    <string name="send_dp_timestamp">send dp(include timestamp)</string>
+    <string name="send_dp_timestamp">Send DP (with Timestamp)</string>
 </resources>
