@@ -133,9 +133,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 .create();
 
         configDialog.setOnShowListener(dialog -> {
-            pid.setText(!TextUtils.isEmpty(BuildConfig.PID) ? BuildConfig.PID : "");
-            uid.setText(!TextUtils.isEmpty(BuildConfig.UUID) ? BuildConfig.UUID : "");
-            ak.setText(!TextUtils.isEmpty(BuildConfig.AUTHOR_KEY) ? BuildConfig.AUTHOR_KEY : "");
+            pid.setText(!TextUtils.isEmpty(BuildConfig.PID) ? BuildConfig.PID.trim() : "");
+            uid.setText(!TextUtils.isEmpty(BuildConfig.UUID) ? BuildConfig.UUID.trim() : "");
+            ak.setText(!TextUtils.isEmpty(BuildConfig.AUTHOR_KEY) ? BuildConfig.AUTHOR_KEY.trim() : "");
         });
 
         initDPViews();
@@ -161,6 +161,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     if (TextUtils.isEmpty(mUid) || TextUtils.isEmpty(mPid) || TextUtils.isEmpty(mAk)) {
                         return;
                     }
+
+                    mUid = mUid.trim();
+                    mPid = mPid.trim();
+                    mAk = mAk.trim();
 
                     if (configDialog.isShowing()) {
                         configDialog.hide();
