@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.FloatRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -67,6 +68,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private DPEventAdapter dpEventAdapter;
     private final int QR_REQUEST_CODE = 0x34;
 
+    private String get(int id){
+        return getResources().getString(id);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,9 +89,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         dialog = new AlertDialog.Builder(MainActivity.this)
                 .setCancelable(false)
-                .setTitle("提示")
-                .setMessage("重启APP完成解绑")
-                .setPositiveButton("确认", (dialog1, which) -> {
+                .setTitle(get(R.string.tips))
+                .setMessage(get(R.string.restart_tip))
+                .setPositiveButton(get(R.string.confirm), (dialog1, which) -> {
                     Intent mStartActivity = getPackageManager().getLaunchIntentForPackage(getPackageName());
                     if (mStartActivity != null) {
                         int mPendingIntentId = 123456;
@@ -101,9 +106,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         upgradeDialog = new AlertDialog.Builder(MainActivity.this)
                 .setCancelable(false)
-                .setTitle("提示")
-                .setMessage("有新版本，确认开始下载")
-                .setPositiveButton("确认", (dialog1, which) -> ioTSDKManager.startUpgradeDownload())
+                .setTitle(get(R.string.tips))
+                .setMessage(get(R.string.update_notice))
+                .setPositiveButton(get(R.string.confirm), (dialog1, which) -> ioTSDKManager.startUpgradeDownload())
                 .create();
 
         View configView = LayoutInflater.from(this).inflate(R.layout.config_layout, null);
@@ -114,19 +119,19 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         configDialog = new AlertDialog.Builder(MainActivity.this)
                 .setCancelable(false)
                 .setView(configView)
-                .setTitle("配置")
-                .setPositiveButton("确认", (dialog1, which) -> {
+                .setTitle(get(R.string.config))
+                .setPositiveButton(get(R.string.confirm), (dialog1, which) -> {
                     mPid = pid.getText().toString();
                     mUid = uid.getText().toString();
                     mAk = ak.getText().toString();
 
                     if (!EasyPermissions.hasPermissions(this, requiredPermissions)) {
-                        EasyPermissions.requestPermissions(this, "需要授予权限以使用设备", PERMISSION_CODE, requiredPermissions);
+                        EasyPermissions.requestPermissions(this, get(R.string.permission_quest_info), PERMISSION_CODE, requiredPermissions);
                     } else {
                         initSDK();
                     }
                 })
-                .setNeutralButton("扫码导入", (dialog2, which) -> {
+                .setNeutralButton(get(R.string.scan), (dialog2, which) -> {
                     Intent intent = new Intent(MainActivity.this, CaptureActivity.class);
                     startActivityForResult(intent, QR_REQUEST_CODE);
                 })
@@ -171,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     }
 
                     if (!EasyPermissions.hasPermissions(this, requiredPermissions)) {
-                        EasyPermissions.requestPermissions(this, "需要授予权限以使用设备", PERMISSION_CODE, requiredPermissions);
+                        EasyPermissions.requestPermissions(this, get(R.string.permission_quest_info), PERMISSION_CODE, requiredPermissions);
                     } else {
                         initSDK();
                     }
@@ -203,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             }
         };
 
-        output("固件版本：" + BuildConfig.VERSION_NAME);
+        output(get(R.string.hw_version) +"：" + BuildConfig.VERSION_NAME);
 
         output("init sdk：" + mPid + "/" + mUid + "/" + mAk);
 
@@ -214,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     @Override
                     public void onDpEvent(DPEvent event) {
                         if (event != null) {
-                            output("收到 dp: " + event);
+                            output("receive dp: " + event);
 
                             runOnUiThread(() -> dpEventAdapter.updateEvent(event));
                         }
@@ -236,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
                         runOnUiThread(() -> {
                             qrCode.setVisibility(View.VISIBLE);
-                            output("用涂鸦智能APP扫码激活");
+                            output(get(R.string.app_tips));
                             qrCode.setImageBitmap(CodeUtils.createImage(url, 400, 400, null));
                         });
                     }
@@ -247,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
                         runOnUiThread(() -> {
                             qrCode.setVisibility(View.GONE);
-                            output("激活成功了");
+                            output(get(R.string.config_success));
                         });
                     }
 
@@ -263,12 +268,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         switch (status) {
                             case IoTSDKManager.STATUS_OFFLINE:
                                 // 设备网络离线
+                                // device offline
                                 break;
                             case IoTSDKManager.STATUS_MQTT_OFFLINE:
                                 // 网络在线MQTT离线
+                                // Network online MQTT offline
                                 break;
                             case IoTSDKManager.STATUS_MQTT_ONLINE:
                                 // 网络在线MQTT在线
+                                // Network online MQTT online
 
                                 SharedPreferences sp = getSharedPreferences("event_cache", MODE_PRIVATE);
 
@@ -321,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             public void onUpgradeInfo(String s) {
                 Log.w(TAG, "onUpgradeInfo: " + s);
 
-                output("收到升级信息: " + s);
+                output("onUpgradeInfo: " + s);
 
 //                runOnUiThread(() -> upgradeDialog.show());
 
@@ -332,7 +340,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             public void onUpgradeDownloadStart() {
                 Log.w(TAG, "onUpgradeDownloadStart");
 
-                output("开始升级下载");
+                output("onUpgradeDownloadStart");
             }
 
             @Override
@@ -344,7 +352,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             public void upgradeFileDownloadFinished(int result, String file) {
                 Log.w(TAG, "upgradeFileDownloadFinished: " + result);
 
-                output("下载完成：" + result + " / " + file);
+                output("upgradeFileDownloadFinished：" + result + " / " + file);
             }
         });
     }
@@ -391,7 +399,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void clear() {
-        runOnUiThread(() -> console.setText("接收日志在这里输出(长按清除): \n"));
+        runOnUiThread(() -> console.setText(get(R.string.log_tips)+ ": \n"));
     }
 
     @Override

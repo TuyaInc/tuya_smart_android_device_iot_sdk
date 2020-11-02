@@ -93,6 +93,7 @@ public interface IoTCallback {
                  * DPEvent.Type.PROP_VALUE
                  * DPEvent.Type.PROP_STR
                  * DPEvent.Type.PROP_ENUM
+                 * DPEvent.Type.PROP_BITMAP
                  * DPEvent.Type.PROP_RAW
                  */
         void onDpEvent(DPEvent event);

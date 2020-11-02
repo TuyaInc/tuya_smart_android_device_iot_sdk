@@ -1,3 +1,27 @@
 <resources>
     <string name="app_name">TuyaSmart_AI_IoT</string>
+    <string name="tips">提示</string>
+
+    <string name="restart_tip">重启APP完成解绑</string>
+
+    <string name="confirm">确认</string>
+
+    <string name="update_notice">有新版本，确认开始下载</string>
+
+    <string name="config">配置</string>
+
+    <string name="permission_quest_info">需要授予权限以使用设备</string>
+
+    <string name="scan">扫码导入</string>
+
+    <string name="hw_version">固件版本</string>
+
+    <string name="app_tips">用涂鸦智能APP扫码激活</string>
+
+    <string name="config_success">激活成功了</string>
+
+    <string name="log_tips">接收日志在这里输出(长按清除)</string>
+    <string name="unbind">解绑设备</string>
+    <string name="send_dp">发送DP</string>
+    <string name="send_dp_timestamp">发送DP(带时间戳)</string>
 </resources>

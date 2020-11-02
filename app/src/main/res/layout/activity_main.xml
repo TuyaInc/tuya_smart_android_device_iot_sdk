@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:background="@android:color/holo_orange_dark"
-        android:text="解绑设备"
+        android:text="@string/unbind"
         android:textAllCaps="false"
         android:textColor="#ffffff"
         app:elevation="6dp" />
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_toLeftOf="@+id/send_time"
-        android:text="发送DP"
+        android:text="@string/send_dp"
         android:textAllCaps="false"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#ffffff"
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:text="发送DP(带时间戳)"
+        android:text="@string/send_dp_timestamp"
         android:textAllCaps="false"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#ffffff"
@@ -52,7 +52,7 @@
         android:alpha="0.6"
         android:gravity="left"
         android:padding="10dp"
-        android:text="接收日志在这里输出(长按清除): \n" />
+        android:text="@string/log_tips" />
 
 
     <androidx.recyclerview.widget.RecyclerView

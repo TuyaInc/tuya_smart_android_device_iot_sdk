@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">TuyaSmart_AI_IoT</string>
+    <string name="tips">notice</string>
+
+    <string name="restart_tip">Restart the app to complete unbinding</string>
+
+    <string name="confirm">confirm</string>
+
+    <string name="update_notice">There is a new version, confirm to start downloading</string>
+
+    <string name="config">Configuration</string>
+
+    <string name="permission_quest_info">Need to grant permission to use device</string>
+
+    <string name="scan">Scan to import</string>
+
+    <string name="hw_version">Firmware version</string>
+
+    <string name="app_tips">Scan code to activate with Tuya Smart APP</string>
+
+    <string name="config_success">Activated successfully</string>
+
+    <string name="log_tips">The receiving log is output here (long press to clear)</string>
+
+    <string name="unbind">unbind device</string>
+
+    <string name="send_dp">send dp</string>
+
+    <string name="send_dp_timestamp">send dp(include timestamp)</string>
+</resources>
