@@ -37,7 +37,7 @@ PID=你的pid
 * 依赖
 
 ```
-implementation 'com.tuya.smart:tuyasmart-iot_sdk:1.0.8'
+implementation 'com.tuya.smart:tuyasmart-iot_sdk:1.0.8.6'
 implementation 'com.tencent.mars:mars-xlog:1.2.3'
 ```
 
@@ -117,6 +117,13 @@ public interface IoTCallback {
         
         //设备初次激活
         void onFirstActive();
+	
+	/**
+         * mqtt消息回调
+         * @param protocol 协议号
+         * @param msgObj 消息
+         */
+        void onMqttMsg(int protocol, JSONObject msgObj);
         
     }
 
